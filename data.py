@@ -46,4 +46,15 @@ countries = df_merged.location.unique()
 # assign a color to each country
 color_list = list(map(lambda c: RGB_color_picker(c).hex, countries))
 color_lookup = dict(zip(countries, color_list))
-print(color_lookup)
+
+stats = {'stats_number_students': 'Number of students',
+         'stats_female_male_ratio': 'Female/Male ratio',
+         'stats_student_staff_ratio': 'Student/Staff ratio',
+         'stats_pc_intl_students': 'International students (%)',
+         'scores_overall': 'Score: overall',
+         'scores_teaching': 'Score: teaching',
+         'scores_research': 'Score: research',
+         'scores_industry_income': 'Score: industry income',
+         'scores_international_outlook': 'Score: international outlook',
+         'scores_citations': 'Score: citations'
+         }

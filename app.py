@@ -6,7 +6,7 @@ from dash.dependencies import Input, Output
 import dash
 import plotly.graph_objs as go
 
-from data import df_merged, countries, color_lookup
+from data import df_merged, countries, color_lookup, stats
 
 app = dash.Dash(__name__)
 app.config.suppress_callback_exceptions = True
@@ -20,9 +20,14 @@ server = app.server
 
 graphcontainer_layout = html.Div([
     html.Div([html.H1("Times Higher Education - World University Rankings")], style={'textAlign': "center"}),
-    html.Div([html.Div([dcc.Dropdown(id='value-selected', options=[{"label": i, 'value': i} for i in countries],
+    html.Div([html.Div([dcc.Dropdown(id='country-selected', options=[{"label": i, 'value': i} for i in countries],
                                      value=["France"], multi=True)],
-                       style={"display": "block", "margin-left": "auto", "margin-right": "auto", "width": "60%"})],
+                       style={"display": "block", "width": "60%", "float": "left"}),
+              html.Div([dcc.Dropdown(id='col-selected', options=[{"label": i, 'value': v} for v,i in stats.items()],
+                                     value='scores_overall', multi=False)],
+                       style={"display": "block", "width": "30%", "float": "right"}),
+              ],
+             style={"height": "40px"},
              className="row"),
     dcc.Graph(id="my-graph")], className="container")
 
@@ -59,17 +64,19 @@ plot_layout = go.Layout(
         t=50,
         b=80
     ),
-    showlegend=True,
+    showlegend=False,
 )
 
 
-
-@app.callback(Output("my-graph", "figure"), [Input("value-selected", "value")])
-def update_graph(selected):
+@app.callback(Output("my-graph", "figure"), [Input("country-selected", "value"), Input("col-selected", "value")])
+def update_graph(country_selected, col_selected):
     dropdown = {i:i for i in countries}
     ctx = dash.callback_context
     trace = []
-    df_updated = df_merged.loc[df_merged['location'].isin(selected)]
+    if len(country_selected)>0:
+        df_updated = df_merged.loc[df_merged['location'].isin(country_selected)]
+    else:
+        df_updated = df_merged
     # for value in selected:
     #     trace.append(go.Bar(x=df_merged[value], y=df_merged.index,
     #                             orientation='h',
@@ -79,9 +86,9 @@ def update_graph(selected):
     marker = {
         'color': list(map(lambda loc: color_lookup[loc], df_updated['location'])),
     }
-    trace = [go.Bar(x=df_updated['stats_female_male_ratio'], y=df_updated.index,
+    trace = [go.Bar(x=df_updated[col_selected], y=df_updated.index,
                         orientation='h',
-                        name='stats_female_male_ratio',
+                        name=col_selected,
                         marker=marker)]
     plot_layout['height'] = len(df_updated)*20
     figure = {"data": trace, "layout": plot_layout}
