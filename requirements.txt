@@ -2,6 +2,7 @@ attrs==19.1.0
 certifi==2019.3.9
 chardet==3.0.4
 Click==7.0
+colour==0.1.5
 dash==0.43.0
 dash-core-components==0.48.0
 dash-html-components==0.16.0

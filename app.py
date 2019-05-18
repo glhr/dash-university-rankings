@@ -6,7 +6,7 @@ from dash.dependencies import Input, Output
 import dash
 import plotly.graph_objs as go
 
-from data import df_merged, countries
+from data import df_merged, countries, color_lookup
 
 app = dash.Dash(__name__)
 app.config.suppress_callback_exceptions = True
@@ -27,8 +27,7 @@ graphcontainer_layout = html.Div([
     dcc.Graph(id="my-graph")], className="container")
 
 
-@app.callback(Output('page-content', 'children'),
-              [Input('url', 'pathname')])
+@app.callback(Output('page-content', 'children'),[Input('url', 'pathname')])
 def display_page(pathname):
     return graphcontainer_layout
 
@@ -64,6 +63,7 @@ plot_layout = go.Layout(
 )
 
 
+
 @app.callback(Output("my-graph", "figure"), [Input("value-selected", "value")])
 def update_graph(selected):
     dropdown = {i:i for i in countries}
@@ -76,9 +76,13 @@ def update_graph(selected):
     #                             # marker={"opacity": 0.7, 'size': 5, 'line': {'width': 0.5, 'color': 'white'}},
     #                             name=dropdown[value]),
     #                             )
+    marker = {
+        'color': list(map(lambda loc: color_lookup[loc], df_updated['location'])),
+    }
     trace = [go.Bar(x=df_updated['stats_female_male_ratio'], y=df_updated.index,
                         orientation='h',
-                        name='stats_female_male_ratio')]
+                        name='stats_female_male_ratio',
+                        marker=marker)]
     plot_layout['height'] = len(df_updated)*20
     figure = {"data": trace, "layout": plot_layout}
     return figure
