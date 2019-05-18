@@ -8,7 +8,9 @@ import plotly.graph_objs as go
 
 from data import df_merged, countries, color_lookup, stats, subjects_offered
 
-app = dash.Dash(__name__)
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.config.suppress_callback_exceptions = True
 
 app.layout = html.Div([
