@@ -58,3 +58,5 @@ stats = {'stats_number_students': 'Number of students',
          'scores_international_outlook': 'Score: international outlook',
          'scores_citations': 'Score: citations'
          }
+
+subjects_offered = set(df_merged["subjects_offered"].str.cat(sep=',').replace(', ', ',').split(','))

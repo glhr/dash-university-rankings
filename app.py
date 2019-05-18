@@ -6,7 +6,7 @@ from dash.dependencies import Input, Output
 import dash
 import plotly.graph_objs as go
 
-from data import df_merged, countries, color_lookup, stats
+from data import df_merged, countries, color_lookup, stats, subjects_offered
 
 app = dash.Dash(__name__)
 app.config.suppress_callback_exceptions = True
@@ -19,17 +19,26 @@ app.layout = html.Div([
 server = app.server
 
 graphcontainer_layout = html.Div([
-    html.Div([html.H1("Times Higher Education - World University Rankings")], style={'textAlign': "center"}),
+    html.Div([html.H3("Times Higher Education - World University Rankings")], style={'textAlign': "center"}),
     html.Div([html.Div([dcc.Dropdown(id='country-selected', options=[{"label": i, 'value': i} for i in countries],
                                      value=["France"], multi=True)],
-                       style={"display": "block", "width": "60%", "float": "left"}),
+                       style={"display": "block", "width": "70%", "float": "left"}),
               html.Div([dcc.Dropdown(id='col-selected', options=[{"label": i, 'value': v} for v,i in stats.items()],
                                      value='scores_overall', multi=False)],
-                       style={"display": "block", "width": "30%", "float": "right"}),
+                       style={"display": "block", "width": "25%", "float": "right"}),
               ],
-             style={"height": "40px"},
+             # style={"height": "40px"},
+             className="row"
+             ),
+    html.Div([html.Div([dcc.Dropdown(id='subj-selected', options=[{"label": i, 'value': i} for i in subjects_offered],
+                                     value=['Electrical & Electronic Engineering'], multi=True)],
+                       style={"display": "block", "width": "100%", "float": "left"})],
+             # style={"height": "40px"},
              className="row"),
-    dcc.Graph(id="my-graph")], className="container")
+    html.Div([dcc.Graph(id="my-graph")],
+             className="row"
+             )],
+    className="container")
 
 
 @app.callback(Output('page-content', 'children'),[Input('url', 'pathname')])
@@ -40,7 +49,7 @@ def display_page(pathname):
 plot_layout = go.Layout(
     autosize=False,
     width=1100,
-    height=len(df_merged)*20,
+    height=len(df_merged)*30,
     xaxis=dict(
         showgrid=False,
         showline=False,
@@ -68,15 +77,21 @@ plot_layout = go.Layout(
 )
 
 
-@app.callback(Output("my-graph", "figure"), [Input("country-selected", "value"), Input("col-selected", "value")])
-def update_graph(country_selected, col_selected):
+@app.callback(Output("my-graph", "figure"),
+              [Input("country-selected", "value"),
+               Input("col-selected", "value"),
+               Input("subj-selected", "value")
+               ])
+def update_graph(country_selected, col_selected, subj_selected):
     dropdown = {i:i for i in countries}
     ctx = dash.callback_context
     trace = []
+    df_updated = df_merged
     if len(country_selected)>0:
-        df_updated = df_merged.loc[df_merged['location'].isin(country_selected)]
-    else:
-        df_updated = df_merged
+        df_updated = df_updated.loc[df_updated['location'].isin(country_selected)]
+    if len(subj_selected) > 0:
+        regexp = '|'.join(subj_selected)
+        df_updated = df_updated.loc[df_updated['subjects_offered'].str.contains(regexp, regex=True)]
     # for value in selected:
     #     trace.append(go.Bar(x=df_merged[value], y=df_merged.index,
     #                             orientation='h',
@@ -87,10 +102,10 @@ def update_graph(country_selected, col_selected):
         'color': list(map(lambda loc: color_lookup[loc], df_updated['location'])),
     }
     trace = [go.Bar(x=df_updated[col_selected], y=df_updated.index,
-                        orientation='h',
-                        name=col_selected,
-                        marker=marker)]
-    plot_layout['height'] = len(df_updated)*20
+                    orientation='h',
+                    name=col_selected,
+                    marker=marker)]
+    plot_layout['height'] = len(df_updated)*40
     figure = {"data": trace, "layout": plot_layout}
     return figure
 
