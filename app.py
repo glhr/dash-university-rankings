@@ -20,8 +20,10 @@ server = app.server
 
 graphcontainer_layout = html.Div([
     html.Div([html.H3("Times Higher Education - World University Rankings")], style={'textAlign': "center"}),
+    html.P(['Data retrieved from the ',html.A('Times Higher Education - World University Rankings', href='https://www.timeshighereducation.com/world-university-rankings/2019/world-ranking')],
+           style={'textAlign': "center"}),
     html.Div([html.Div([dcc.Dropdown(id='country-selected', options=[{"label": i, 'value': i} for i in countries],
-                                     value=["France"], multi=True)],
+                                     value=["France","Netherlands","Denmark"], multi=True)],
                        style={"display": "block", "width": "70%", "float": "left"}),
               html.Div([dcc.Dropdown(id='col-selected', options=[{"label": i, 'value': v} for v,i in stats.items()],
                                      value='scores_overall', multi=False)],
@@ -47,9 +49,10 @@ def display_page(pathname):
 
 
 plot_layout = go.Layout(
-    autosize=False,
-    width=1100,
-    height=len(df_merged)*30,
+    # autosize=False,
+    # width=1100,
+    # height=len(df_merged)*30,
+    autosize=True,
     xaxis=dict(
         showgrid=False,
         showline=False,

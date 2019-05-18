@@ -6,3 +6,6 @@
 .Select--multi .Select-value-icon{
     border-right:1px solid #333;
 }
+.Select {
+    margin: 3px;
+}

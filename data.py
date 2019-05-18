@@ -23,13 +23,17 @@ for file_path, url in file_paths.items():
 plot_countries = {'France', 'Netherlands', 'Belgium', 'Denmark'}
 plot_subjects = 'Electrical \u0026 Electronic Engineering'
 
+pd.set_option('display.expand_frame_repr', False)
 df_currentyear=pd.DataFrame.from_dict(data['world_university_rankings_2019'])
-df_currentyear.set_index('name',inplace=True)
+df_currentyear.set_index('name', inplace=True)
 
-df_lastyear=pd.DataFrame.from_dict(data['world_university_rankings_2019'])
-df_lastyear.set_index('name',inplace=True)
+df_lastyear=pd.DataFrame.from_dict(data['world_university_rankings_2018'])
+df_lastyear.set_index('name', inplace=True)
 
 df_merged = df_currentyear.combine_first(df_lastyear)
+df_merged.drop(columns=['aliases'], inplace=True)
+df_merged[['rank','rank_order']] = df_merged[['rank','rank_order']].apply(pd.to_numeric, errors='ignore')
+df_merged = df_merged.sort_values('rank_order')
 
 def compute_ratio(ratio_str):
     try:
@@ -56,7 +60,9 @@ stats = {'stats_number_students': 'Number of students',
          'scores_research': 'Score: research',
          'scores_industry_income': 'Score: industry income',
          'scores_international_outlook': 'Score: international outlook',
-         'scores_citations': 'Score: citations'
+         'scores_citations': 'Score: citations',
+         # 'rank': 'Rank',
+         # 'rank_order': 'Rank order'
          }
 
 subjects_offered = set(df_merged["subjects_offered"].str.cat(sep=',').replace(', ', ',').split(','))
