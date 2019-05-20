@@ -4,6 +4,10 @@ import json
 import pandas as pd
 from colour import RGB_color_picker
 
+uni_websites_path = 'uni_websites.json'
+with open(uni_websites_path,'r') as unis_json:
+    uni_websites = json.load(unis_json)
+
 file_paths = {'world_university_rankings_2019.json':'https://www.timeshighereducation.com//sites//default//files//the_data_rankings//world_university_rankings_2019_limit0_7216a250f6ae72c71cd09563798a9f18.json',
               'world_university_rankings_2018.json':'https://www.timeshighereducation.com//sites//default//files//the_data_rankings//world_university_rankings_2018_limit0_369a9045a203e176392b9fb8f8c1cb2a.json'}
 data = {}

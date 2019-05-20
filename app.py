@@ -6,7 +6,7 @@ from dash.dependencies import Input, Output
 import dash
 import plotly.graph_objs as go
 
-from data import df_merged, countries, color_lookup, stats, subjects_offered
+from data import df_merged, countries, color_lookup, stats, subjects_offered, uni_websites
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -106,7 +106,8 @@ def update_graph(country_selected, col_selected, subj_selected):
     marker = {
         'color': list(map(lambda loc: color_lookup[loc], df_updated['location'])),
     }
-    trace = [go.Bar(x=df_updated[col_selected], y=df_updated.index,
+    trace = [go.Bar(x=df_updated[col_selected],
+                    y=['<a href="{a}">{b}</a>'.format(a=uni_websites.get(i), b=i) if uni_websites.get(i) else i for i in df_updated.index],
                     orientation='h',
                     name=col_selected,
                     marker=marker)]
