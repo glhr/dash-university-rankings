@@ -19,6 +19,12 @@ def write_to_json_file(path, data):
         f_json.write(data)
 
 
+def write_dict_to_file(data, path):
+    with open(path, 'w') as fp:
+        print('writing to file')
+        json.dump(data, fp)
+
+
 def download_json_file(path,url):
     print('Downloading JSON file')
     response = requests.get(url)
