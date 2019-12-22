@@ -111,7 +111,8 @@ def update_graph(country_selected, col_selected, subj_selected):
                     orientation='h',
                     name=col_selected,
                     marker=marker)]
-    plot_layout['height'] = len(df_updated)*40
+    # plot_layout['height'] = len(df_updated)*60
+    plot_layout['height'] = max(300,len(df_updated[col_selected])*30)
     figure = {"data": trace, "layout": plot_layout}
     return figure
 
