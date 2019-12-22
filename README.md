@@ -10,3 +10,14 @@ Data scraped from:
 * [pandas](https://pandas.pydata.org/) for data conversion, manipulation and analysis
 * [Dash and Plot.ly](https://plot.ly/products/dash/) for interactive data visualization
 * [Gunicorn](https://gunicorn.org/) for deployment
+
+### Setup instructions
+
+```bash
+git clone https://github.com/glhr/dash-university-rankings.git
+cd dash-university-rankings
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+python3 app.py
+```
